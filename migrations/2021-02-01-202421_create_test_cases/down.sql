@@ -1,0 +1,9 @@
+DROP TABLE test_case_steps;
+DROP TABLE test_case_gherkin;
+DROP TABLE traceability;
+DROP TABLE linked_test_cases;
+DROP TABLE test_cases;
+DROP TABLE test_case_type;
+DROP TABLE test_case_nature;
+DROP TABLE test_case_importance;
+DROP TABLE test_case_status;

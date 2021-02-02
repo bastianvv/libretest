@@ -8,10 +8,12 @@ use chrono::{Utc, NaiveDateTime};
 #[derive(Serialize, Deserialize, AsChangeset, Insertable)]
 #[table_name = "requirements"]
 pub struct Requirement {
-    pub id: i32,
-    pub creation_date: NaiveDateTime,
+    pub creation_date: Option<NaiveDateTime>,
+    pub created_by: Option<i32>,
+    pub updated_date: Option<NaiveDateTime>,
+    pub updated_by: Option<i32>,
     pub code: Option<String>,
-    pub status: i32,
+    pub status: Option<i32>,
     pub importance: Option<i32>,
     pub nature: Option<i32>,
     pub title: String,
@@ -21,8 +23,10 @@ pub struct Requirement {
 impl Requirement {
     fn from(requirement: Requirement) -> Requirement {
         Requirement {
-            id: requirement.id,
-            creation_date: Utc::now().naive_utc(),
+            creation_date: Some(Utc::now().naive_utc()),
+            created_by: requirement.created_by,
+            updated_date: requirement.updated_date,
+            updated_by: requirement.updated_by,
             code: requirement.code,
             status: requirement.status,
             importance: requirement.importance,
@@ -37,9 +41,12 @@ impl Requirement {
 #[table_name = "requirements"]
 pub struct Requirements {
     pub id: i32,
-    pub creation_date: NaiveDateTime,
+    pub creation_date: Option<NaiveDateTime>,
+    pub created_by: Option<i32>,
+    pub updated_date: Option<NaiveDateTime>,
+    pub updated_by: Option<i32>,
     pub code: Option<String>,
-    pub status: i32,
+    pub status: Option<i32>,
     pub importance: Option<i32>,
     pub nature: Option<i32>,
     pub title: String,
