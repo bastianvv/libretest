@@ -53,7 +53,7 @@ CREATE TABLE test_cases (
     updated_by INTEGER REFERENCES users (id),
     code VARCHAR,
     status INTEGER DEFAULT 1 REFERENCES test_case_status (id),
-    importance INTEGER REFERENCES test_case_status (id),
+    importance INTEGER REFERENCES test_case_importance (id),
     nature INTEGER REFERENCES test_case_nature (id),
     test_type INTEGER NOT NULL REFERENCES test_case_type (id),
     automated BOOLEAN DEFAULT false,
