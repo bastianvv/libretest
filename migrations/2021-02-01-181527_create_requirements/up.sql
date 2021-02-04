@@ -37,12 +37,12 @@ INSERT INTO requirement_nature (name) values
 
 CREATE TABLE requirements (
 id SERIAL PRIMARY KEY,
-creation_date TIMESTAMP DEFAULT now(),
-created_by INTEGER REFERENCES users (id),
+creation_date TIMESTAMP NOT NULL DEFAULT now(),
+created_by INTEGER NOT NULL REFERENCES users (id),
 updated_date TIMESTAMP,
 updated_by INTEGER REFERENCES users (id),
 code VARCHAR,
-status INTEGER DEFAULT 1 REFERENCES requirement_status (id),
+status INTEGER NOT NULL DEFAULT 1 REFERENCES requirement_status (id),
 importance INTEGER REFERENCES requirement_importance (id),
 nature INTEGER REFERENCES requirement_nature (id),
 title VARCHAR NOT NULL,

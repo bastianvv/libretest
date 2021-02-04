@@ -45,12 +45,12 @@ table! {
 table! {
     requirements (id) {
         id -> Int4,
-        creation_date -> Nullable<Timestamp>,
-        created_by -> Nullable<Int4>,
+        creation_date -> Timestamp,
+        created_by -> Int4,
         updated_date -> Nullable<Timestamp>,
         updated_by -> Nullable<Int4>,
         code -> Nullable<Varchar>,
-        status -> Nullable<Int4>,
+        status -> Int4,
         importance -> Nullable<Int4>,
         nature -> Nullable<Int4>,
         title -> Varchar,
