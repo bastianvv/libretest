@@ -62,6 +62,26 @@ async fn unlink(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
     Ok(HttpResponse::Ok().json(deleted_link))
 }
 
+//Traceability
+#[get("/traceability/{id}")]
+async fn find_traceability(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
+    let trace = Trace::find(id.into_inner())?;
+    Ok(HttpResponse::Ok().json(trace))
+}
+
+#[post("/traceability")]
+async fn traceability(trace: web::Json<Traceability>) -> Result<HttpResponse, CustomError> {
+    let trace = Trace::create(trace.into_inner())?;
+    Ok(HttpResponse::Ok().json(trace))
+}
+
+#[delete("/traceability/{id}")]
+async fn delete_traceability(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
+    let deleted_traceability = Trace::delete(id.into_inner())?;
+    Ok(HttpResponse::Ok().json(deleted_traceability))
+}
+
+
 pub fn init_routes(config: &mut web::ServiceConfig) {
     config.service(find_all);
     config.service(find);
@@ -71,4 +91,7 @@ pub fn init_routes(config: &mut web::ServiceConfig) {
     config.service(find_link);
     config.service(link);
     config.service(unlink);
+    config.service(find_traceability);
+    config.service(traceability);
+    config.service(delete_traceability);
 }
