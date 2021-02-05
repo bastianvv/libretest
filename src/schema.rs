@@ -141,13 +141,25 @@ table! {
 }
 
 table! {
+    test_plan_status (id) {
+        id -> Int4,
+        name -> Varchar,
+    }
+}
+
+table! {
     test_plans (id) {
         id -> Int4,
+        creation_date -> Timestamp,
+        created_by -> Int4,
+        updated_date -> Nullable<Timestamp>,
+        updated_by -> Nullable<Int4>,
         code -> Nullable<Varchar>,
+        status -> Int4,
         start_date -> Nullable<Date>,
         end_date -> Nullable<Date>,
         title -> Varchar,
-        description -> Varchar,
+        description -> Nullable<Varchar>,
     }
 }
 
@@ -198,6 +210,7 @@ joinable!(test_executions -> test_cases (test_case_id));
 joinable!(test_executions -> test_execution_status (execution_status));
 joinable!(test_executions -> test_plans (test_plan_id));
 joinable!(test_executions -> users (executed_by));
+joinable!(test_plans -> test_plan_status (status));
 joinable!(traceability -> requirements (req_id));
 joinable!(traceability -> test_cases (tc_id));
 joinable!(user_group_permissions -> permissions (permission_id));
@@ -221,6 +234,7 @@ allow_tables_to_appear_in_same_query!(
     test_cases,
     test_execution_status,
     test_executions,
+    test_plan_status,
     test_plans,
     traceability,
     user_group,
