@@ -47,16 +47,16 @@ INSERT INTO test_case_type (name) values
 
 CREATE TABLE test_cases (
     id SERIAL PRIMARY KEY,
-    creation_date TIMESTAMP DEFAULT now(),
-    created_by INTEGER REFERENCES users (id),
+    creation_date TIMESTAMP NOT NULL DEFAULT now(),
+    created_by INTEGER NOT NULL REFERENCES users (id),
     updated_date TIMESTAMP,
     updated_by INTEGER REFERENCES users (id),
     code VARCHAR,
-    status INTEGER DEFAULT 1 REFERENCES test_case_status (id),
+    status INTEGER NOT NULL DEFAULT 1 REFERENCES test_case_status (id),
     importance INTEGER REFERENCES test_case_importance (id),
     nature INTEGER REFERENCES test_case_nature (id),
     test_type INTEGER NOT NULL REFERENCES test_case_type (id),
-    automated BOOLEAN DEFAULT false,
+    automated BOOLEAN NOT NULL DEFAULT false,
     title VARCHAR NOT NULL,
     description VARCHAR
 );
