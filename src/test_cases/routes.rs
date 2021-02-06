@@ -1,12 +1,4 @@
-use crate::test_cases::{
-    CreateSimpleTestCase,
-    UpdateTestCase,
-    TestCase,
-    LinkedTestCase,
-    LinkedTestCases,
-    Traceability,
-    Trace,
-};
+use crate::test_cases::{CreateSimpleTestCase, UpdateTestCase, TestCase, LinkedTestCase, LinkedTestCases, Traceability, Trace, TestCaseStep, TestCaseSteps, TestCaseGherkin, Gherkin, UpdateTestCaseSteps, UpdateTestCaseGherkin};
 
 use actix_web::{delete, get, post, put, web, HttpResponse};
 use serde_json::json;
@@ -81,6 +73,55 @@ async fn delete_traceability(id: web::Path<i32>) -> Result<HttpResponse, CustomE
     Ok(HttpResponse::Ok().json(deleted_traceability))
 }
 
+//Test Case Steps
+#[get("/steps/{id}")]
+async fn find_step(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
+    let step = TestCaseStep::find(id.into_inner())?;
+    Ok(HttpResponse::Ok().json(step))
+}
+
+#[post("/steps")]
+async fn create_step(step: web::Json<TestCaseSteps>) -> Result<HttpResponse, CustomError> {
+    let step = TestCaseStep::create(step.into_inner())?;
+    Ok(HttpResponse::Ok().json(step))
+}
+
+#[put("/steps/{id}")]
+async fn update_step(id: web::Path<i32>, test_case_steps: web::Json<UpdateTestCaseSteps>) -> Result<HttpResponse, CustomError> {
+    let test_case_steps = TestCaseStep::update(id.into_inner(), test_case_steps.into_inner())?;
+    Ok(HttpResponse::Ok().json(test_case_steps))
+}
+
+#[delete("/steps/{id}")]
+async fn delete_step(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
+    let deleted_step = TestCaseStep::delete(id.into_inner())?;
+    Ok(HttpResponse::Ok().json(deleted_step))
+}
+
+//Test Case Steps
+#[get("/gherkin/{id}")]
+async fn find_gherkin(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
+    let gherkin = Gherkin::find(id.into_inner())?;
+    Ok(HttpResponse::Ok().json(gherkin))
+}
+
+#[post("/gherkin")]
+async fn create_gherkin(gherkin: web::Json<TestCaseGherkin>) -> Result<HttpResponse, CustomError> {
+    let gherkin = Gherkin::create(gherkin.into_inner())?;
+    Ok(HttpResponse::Ok().json(gherkin))
+}
+
+#[put("/gherkin/{id}")]
+async fn update_gherkin(id: web::Path<i32>, gherkin: web::Json<UpdateTestCaseGherkin>) -> Result<HttpResponse, CustomError> {
+    let gherkin = Gherkin::update(id.into_inner(), gherkin.into_inner())?;
+    Ok(HttpResponse::Ok().json(gherkin))
+}
+
+#[delete("/gherkin/{id}")]
+async fn delete_gherkin(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
+    let deleted_gherkin = Gherkin::delete(id.into_inner())?;
+    Ok(HttpResponse::Ok().json(deleted_gherkin))
+}
 
 pub fn init_routes(config: &mut web::ServiceConfig) {
     config.service(find_all);
@@ -94,4 +135,12 @@ pub fn init_routes(config: &mut web::ServiceConfig) {
     config.service(find_traceability);
     config.service(traceability);
     config.service(delete_traceability);
+    config.service(find_step);
+    config.service(create_step);
+    config.service(update_step);
+    config.service(delete_step);
+    config.service(find_gherkin);
+    config.service(create_gherkin);
+    config.service(update_gherkin);
+    config.service(delete_gherkin);
 }

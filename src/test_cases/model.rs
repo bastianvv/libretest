@@ -209,3 +209,137 @@ impl Trace {
         Ok(res)
     }
 }
+
+#[derive(Serialize, Deserialize, AsChangeset, Insertable)]
+#[table_name = "test_case_steps"]
+pub struct TestCaseSteps {
+    tc_id: i32,
+    step_order: i32,
+    step_description: Option<String>,
+    step_expected_results: Option<String>,
+}
+
+impl TestCaseSteps {
+    fn from(test_case_step: TestCaseSteps) -> TestCaseSteps {
+        TestCaseSteps {
+            tc_id: test_case_step.tc_id,
+            step_order: test_case_step.step_order,
+            step_description: test_case_step.step_description,
+            step_expected_results: test_case_step.step_expected_results,
+
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, AsChangeset, Insertable)]
+#[table_name = "test_case_steps"]
+pub struct UpdateTestCaseSteps {
+    step_order: i32,
+    step_description: Option<String>,
+    step_expected_results: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Queryable, Insertable)]
+#[table_name = "test_case_steps"]
+pub struct TestCaseStep {
+    id: i32,
+    tc_id: i32,
+    step_order: i32,
+    step_description: Option<String>,
+    step_expected_results: Option<String>,
+}
+
+impl TestCaseStep {
+
+    pub fn find(id: i32) -> Result<Self, CustomError> {
+        let conn = db::connection()?;
+        let step = test_case_steps::table.filter(test_case_steps::id.eq(id)).first(&conn)?;
+        Ok(step)
+    }
+
+    pub fn create(step: TestCaseSteps) -> Result<Self, CustomError> {
+        let conn = db::connection()?;
+        let step = TestCaseSteps::from(step);
+        let step = diesel::insert_into(test_case_steps::table)
+            .values(step)
+            .get_result(&conn)?;
+        Ok(step)
+    }
+
+    pub fn update(id: i32, test_case_steps: UpdateTestCaseSteps) -> Result<Self, CustomError> {
+        let conn = db::connection()?;
+        let test_case_steps = diesel::update(test_case_steps::table)
+            .filter(test_case_steps::id.eq(id))
+            .set(test_case_steps)
+            .get_result(&conn)?;
+        Ok(test_case_steps)
+    }
+    pub fn delete(id: i32) -> Result<usize, CustomError> {
+        let conn = db::connection()?;
+        let res = diesel::delete(test_case_steps::table.filter(test_case_steps::id.eq(id))).execute(&conn)?;
+        Ok(res)
+    }
+}
+
+
+#[derive(Serialize, Deserialize, AsChangeset, Insertable)]
+#[table_name = "test_case_gherkin"]
+pub struct TestCaseGherkin {
+    tc_id: i32,
+    script: Option<String>,
+}
+
+impl TestCaseGherkin {
+    fn from(test_case_gherkin: TestCaseGherkin) -> TestCaseGherkin {
+        TestCaseGherkin {
+            tc_id: test_case_gherkin.tc_id,
+            script: test_case_gherkin.script,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, AsChangeset, Insertable)]
+#[table_name = "test_case_gherkin"]
+pub struct UpdateTestCaseGherkin {
+    script: Option<String>,
+}
+
+#[derive(Serialize, Deserialize, Queryable, Insertable)]
+#[table_name = "test_case_gherkin"]
+pub struct Gherkin {
+    id: i32,
+    tc_id: i32,
+    script: Option<String>,
+}
+
+impl Gherkin {
+
+    pub fn find(id: i32) -> Result<Self, CustomError> {
+        let conn = db::connection()?;
+        let gherkin = test_case_gherkin::table.filter(test_case_gherkin::id.eq(id)).first(&conn)?;
+        Ok(gherkin)
+    }
+
+    pub fn create(gherkin: TestCaseGherkin) -> Result<Self, CustomError> {
+        let conn = db::connection()?;
+        let gherkin = TestCaseGherkin::from(gherkin);
+        let gherkin = diesel::insert_into(test_case_gherkin::table)
+            .values(gherkin)
+            .get_result(&conn)?;
+        Ok(gherkin)
+    }
+
+    pub fn update(id: i32, test_case_gherkin: UpdateTestCaseGherkin) -> Result<Self, CustomError> {
+        let conn = db::connection()?;
+        let test_case_gherkin = diesel::update(test_case_gherkin::table)
+            .filter(test_case_gherkin::id.eq(id))
+            .set(test_case_gherkin)
+            .get_result(&conn)?;
+        Ok(test_case_gherkin)
+    }
+    pub fn delete(id: i32) -> Result<usize, CustomError> {
+        let conn = db::connection()?;
+        let res = diesel::delete(test_case_gherkin::table.filter(test_case_gherkin::id.eq(id))).execute(&conn)?;
+        Ok(res)
+    }
+}

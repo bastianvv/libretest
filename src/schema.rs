@@ -62,7 +62,7 @@ table! {
     test_case_gherkin (id) {
         id -> Int4,
         tc_id -> Int4,
-        script -> Varchar,
+        script -> Nullable<Varchar>,
     }
 }
 

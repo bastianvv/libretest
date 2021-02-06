@@ -80,11 +80,13 @@ id SERIAL PRIMARY KEY,
 tc_id INTEGER NOT NULL REFERENCES test_cases (id),
 step_order INTEGER NOT NULL,
 step_description VARCHAR,
-step_expected_results VARCHAR
+step_expected_results VARCHAR,
+UNIQUE(id, tc_id)
 );
 
 CREATE TABLE test_case_gherkin (
 id SERIAL PRIMARY KEY,
 tc_id INTEGER NOT NULL REFERENCES test_cases (id),
-script VARCHAR NOT NULL
+script VARCHAR,
+UNIQUE(id, tc_id)
 );
