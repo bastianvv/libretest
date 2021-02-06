@@ -14,6 +14,7 @@ mod schema;
 mod requirements;
 mod test_cases;
 mod test_plans;
+mod test_executions;
 mod error_handler;
 
 #[actix_rt::main]
@@ -31,6 +32,7 @@ async fn main() -> std::io::Result<()> {
             .configure(requirements::init_routes)
             .configure(test_cases::init_routes)
             .configure(test_plans::init_routes)
+            .configure(test_executions::init_routes)
             .wrap(middleware::Logger::default())
             .wrap(middleware::Logger::new("%a %{User-Agent}i"))
     });

@@ -132,6 +132,10 @@ table! {
 table! {
     test_executions (id) {
         id -> Int4,
+        creation_date -> Timestamp,
+        created_by -> Int4,
+        updated_date -> Nullable<Timestamp>,
+        updated_by -> Nullable<Int4>,
         test_plan_id -> Int4,
         test_case_id -> Int4,
         execution_status -> Int4,
@@ -209,7 +213,6 @@ joinable!(test_cases -> test_case_type (test_type));
 joinable!(test_executions -> test_cases (test_case_id));
 joinable!(test_executions -> test_execution_status (execution_status));
 joinable!(test_executions -> test_plans (test_plan_id));
-joinable!(test_executions -> users (executed_by));
 joinable!(test_plans -> test_plan_status (status));
 joinable!(traceability -> requirements (req_id));
 joinable!(traceability -> test_cases (tc_id));
