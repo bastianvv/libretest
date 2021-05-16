@@ -12,6 +12,7 @@ use std::env;
 
 mod db;
 mod schema;
+mod users;
 mod requirements;
 mod test_cases;
 mod test_plans;
@@ -33,6 +34,7 @@ async fn main() -> std::io::Result<()> {
           CookieIdentityPolicy::new(&[0; 32])
               .name("users-cookie")
               .secure(false)))
+            .configure(users::init_routes)
             .configure(requirements::init_routes)
             .configure(test_cases::init_routes)
             .configure(test_plans::init_routes)
