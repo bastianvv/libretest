@@ -108,7 +108,6 @@ impl User {
         let config = Config::default();
         self.password = argon2::hash_encoded(self.password.as_bytes(), &salt, &config)
             .map_err(|e| CustomError::new(500, format!("Failed to hash password: {}", e)))?;
-
         Ok(())
     }
 
