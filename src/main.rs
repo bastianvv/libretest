@@ -4,7 +4,8 @@ extern crate diesel;
 extern crate diesel_migrations;
 extern crate env_logger;
 
-use actix_web::{App, HttpServer, middleware};
+use actix_web::{App, HttpServer, HttpResponse, middleware};
+use actix_identity::{Identity, CookieIdentityPolicy, IdentityService};
 use dotenv::dotenv;
 use listenfd::ListenFd;
 use std::env;
@@ -28,7 +29,10 @@ async fn main() -> std::io::Result<()> {
 
     let mut listenfd = ListenFd::from_env();
     let mut server = HttpServer::new(||{
-        App::new()
+        App::new().wrap(IdentityService::new(
+          CookieIdentityPolicy::new(&[0; 32])
+              .name("users-cookie")
+              .secure(false)))
             .configure(requirements::init_routes)
             .configure(test_cases::init_routes)
             .configure(test_plans::init_routes)

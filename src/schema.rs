@@ -198,6 +198,9 @@ table! {
         email -> Nullable<Varchar>,
         admin -> Bool,
         user_group_id -> Nullable<Int4>,
+        password -> Varchar,
+        creation_date -> Timestamp,
+        updated_date -> Nullable<Timestamp>,
     }
 }
 

@@ -47,7 +47,10 @@ username VARCHAR NOT NULL,
 name VARCHAR,
 email VARCHAR UNIQUE,
 admin BOOLEAN DEFAULT FALSE NOT NULL,
-user_group_id INTEGER REFERENCES user_group (id)
+user_group_id INTEGER REFERENCES user_group (id),
+password VARCHAR NOT NULL,
+creation_date TIMESTAMP NOT NULL,
+updated_date TIMESTAMP
 );
 
-INSERT INTO users (username, email, admin) values ('admin', 'admin@localhost', true)
+INSERT INTO users (username, email, admin, password, creation_date) values ('admin', 'admin@localhost', true, 'password', CURRENT_DATE)
