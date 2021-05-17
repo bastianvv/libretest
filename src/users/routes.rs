@@ -76,7 +76,7 @@ async fn login(credentials: web::Json<AuthUser>, session: Session) -> Result<Htt
     if is_valid == true {
         session.set("user_id", user.id);
         session.renew();
-        Ok(HttpResponse::Ok().json(user))
+        Ok(HttpResponse::Ok().json(json!({"message": "Login successful"})))
     }
     else {
         Err(CustomError::new(401, "Credentials not valid!".to_string()))
