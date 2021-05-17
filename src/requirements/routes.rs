@@ -5,59 +5,101 @@ use crate::requirements::{
     LinkedRequirement,
     LinkedRequirements
 };
-
+use crate::users::User;
 use actix_web::{delete, get, post, put, web, HttpResponse};
 use serde_json::json;
+use actix_session::Session;
 use crate::error_handler::CustomError;
 
 //Requirements
 #[get("/requirements")]
-async fn find_all() -> Result<HttpResponse, CustomError> {
-    let requirements = Requirement::find_all()?;
-    Ok(HttpResponse::Ok().json(requirements))
+async fn find_all(session: Session) -> Result<HttpResponse, CustomError> {
+    let id: Option<i32> = session.get("user_id")?;
+    if let Some(id) = id {
+        let requirements = Requirement::find_all()?;
+        Ok(HttpResponse::Ok().json(requirements))
+    } else {
+        Err(CustomError::new(401, "Unauthorized".to_string()))
+    }
 }
 
 #[get("/requirements/{id}")]
-async fn find(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
-    let requirement = Requirement::find(id.into_inner())?;
-    Ok(HttpResponse::Ok().json(requirement))
+async fn find(req_id: web::Path<i32>, session: Session) -> Result<HttpResponse, CustomError> {
+    let id: Option<i32> = session.get("user_id")?;
+    if let Some(id) = id {
+        let requirement = Requirement::find(req_id.into_inner())?;
+        Ok(HttpResponse::Ok().json(requirement))
+    } else {
+        Err(CustomError::new(401, "Unauthorized".to_string()))
+    }
 }
 
 #[post("/requirements")]
-async fn create(requirement: web::Json<CreateSimpleRequirement>) -> Result<HttpResponse, CustomError> {
-    let requirement = Requirement::create(requirement.into_inner())?;
-    Ok(HttpResponse::Ok().json(requirement))
+async fn create(requirement: web::Json<CreateSimpleRequirement>, session: Session) -> Result<HttpResponse, CustomError> {
+    let id: Option<i32> = session.get("user_id")?;
+    if let Some(id) = id {
+        let requirement = Requirement::create(requirement.into_inner())?;
+        Ok(HttpResponse::Ok().json(requirement))
+    } else {
+        Err(CustomError::new(401, "Unauthorized".to_string()))
+    }
 }
 
 #[put("/requirements/{id}")]
-async fn update(id: web::Path<i32>, requirement: web::Json<UpdateRequirement>) -> Result<HttpResponse, CustomError> {
-    let requirement = Requirement::update(id.into_inner(), requirement.into_inner())?;
-    Ok(HttpResponse::Ok().json(requirement))
+async fn update(req_id: web::Path<i32>, requirement: web::Json<UpdateRequirement>, session: Session) -> Result<HttpResponse, CustomError> {
+    let id: Option<i32> = session.get("user_id")?;
+    if let Some(id) = id {
+        let requirement = Requirement::update(req_id.into_inner(), requirement.into_inner())?;
+        Ok(HttpResponse::Ok().json(requirement))
+    } else {
+        Err(CustomError::new(401, "Unauthorized".to_string()))
+    }
 }
 
 #[delete("/requirements/{id}")]
-async fn delete(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
-    let deleted_requirement = Requirement::delete(id.into_inner())?;
-    Ok(HttpResponse::Ok().json(json!({"deleted": deleted_requirement})))
+async fn delete(req_id: web::Path<i32>, session: Session) -> Result<HttpResponse, CustomError> {
+    let id: Option<i32> = session.get("user_id")?;
+    if let Some(id) = id {
+        let deleted_requirement = Requirement::delete(req_id.into_inner())?;
+        Ok(HttpResponse::Ok().json(json!({"deleted": deleted_requirement})))
+    } else {
+        Err(CustomError::new(401, "Unauthorized".to_string()))
+    }
 }
+
 
 //Link requirements
 #[get("/requirements/link/{id}")]
-async fn find_link(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
-    let linked = LinkedRequirements::find(id.into_inner())?;
-    Ok(HttpResponse::Ok().json(linked))
+async fn find_link(link_id: web::Path<i32>, session: Session) -> Result<HttpResponse, CustomError> {
+    let id: Option<i32> = session.get("user_id")?;
+    if let Some(id) = id {
+        let linked = LinkedRequirements::find(link_id.into_inner())?;
+        Ok(HttpResponse::Ok().json(linked))
+    } else {
+        Err(CustomError::new(401, "Unauthorized".to_string()))
+    }
 }
 
 #[post("/requirements/link")]
-async fn link(link: web::Json<LinkedRequirement>) -> Result<HttpResponse, CustomError> {
-    let link = LinkedRequirements::link(link.into_inner())?;
-    Ok(HttpResponse::Ok().json(link))
+async fn link(link: web::Json<LinkedRequirement>, session: Session) -> Result<HttpResponse, CustomError> {
+    let id: Option<i32> = session.get("user_id")?;
+    if let Some(id) = id {
+        let link = LinkedRequirements::link(link.into_inner())?;
+        Ok(HttpResponse::Ok().json(link))
+    } else {
+        Err(CustomError::new(401, "Unauthorized".to_string()))
+    }
 }
 
 #[delete("/requirements/link/{id}")]
-async fn unlink(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
-    let deleted_link = LinkedRequirements::unlink(id.into_inner())?;
-    Ok(HttpResponse::Ok().json(deleted_link))
+async fn unlink(link_id: web::Path<i32>, session: Session) -> Result<HttpResponse, CustomError> {
+    let id: Option<i32> = session.get("user_id")?;
+    if let Some(id) = id {
+        let deleted_link = LinkedRequirements::unlink(link_id.into_inner())?;
+        Ok(HttpResponse::Ok().json(deleted_link))
+    } else {
+        Err(CustomError::new(401, "Unauthorized".to_string()))
+    }
 }
 
 pub fn init_routes(config: &mut web::ServiceConfig) {

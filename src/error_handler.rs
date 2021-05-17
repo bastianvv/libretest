@@ -1,6 +1,7 @@
 use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError};
 use diesel::result::Error as DieselError;
+use actix_web::error::Error as ActixError;
 use serde::Deserialize;
 use serde_json::json;
 use std::fmt;
@@ -51,5 +52,11 @@ impl ResponseError for CustomError {
         };
 
         HttpResponse::build(status_code).json(json!({ "message": error_message }))
+    }
+}
+
+impl From<ActixError> for CustomError {
+    fn from(error: ActixError) -> CustomError {
+        CustomError::new(500, error.to_string())
     }
 }

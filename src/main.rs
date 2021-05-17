@@ -4,11 +4,12 @@ extern crate diesel;
 extern crate diesel_migrations;
 extern crate env_logger;
 
-use actix_web::{App, HttpServer, HttpResponse, middleware};
-use actix_identity::{Identity, CookieIdentityPolicy, IdentityService};
+use actix_web::{App, HttpServer, middleware};
+use actix_identity::{CookieIdentityPolicy, IdentityService};
 use dotenv::dotenv;
 use listenfd::ListenFd;
 use std::env;
+use actix_redis::RedisSession;
 
 mod db;
 mod schema;
@@ -28,9 +29,14 @@ async fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "actix_web=debug");
     env_logger::init();
 
+    let redis_host = env::var("REDIS_HOST").expect("Redis host not set");
+    let redis_port = env::var("REDIS_PORT").expect("Redis port not set");
+
     let mut listenfd = ListenFd::from_env();
-    let mut server = HttpServer::new(||{
-        App::new().wrap(IdentityService::new(
+    let mut server = HttpServer::new(move||{
+        App::new()
+            .wrap(RedisSession::new(format!("{}:{}", redis_host, redis_port), &[0; 32]))
+            .wrap(IdentityService::new(
           CookieIdentityPolicy::new(&[0; 32])
               .name("users-cookie")
               .secure(false)))

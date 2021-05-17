@@ -41,12 +41,6 @@ impl CreateUser {
             .map_err(|e| CustomError::new(500, format!("Failed to hash password: {}", e)))?;
         Ok(())
     }
-
-    pub fn verify_password(&self, password: &[u8]) -> Result<bool, CustomError> {
-        argon2::verify_encoded(&self.password, password)
-            .map_err(|e| CustomError::new(500, format!("Failed to verify password: {}", e)))
-
-    }
 }
 
 #[derive(Serialize, Deserialize, AsChangeset, Insertable)]
@@ -60,6 +54,13 @@ pub struct UpdateUser {
     pub password: String,
     pub creation_date: NaiveDateTime,
     pub updated_date: Option<NaiveDateTime>
+}
+
+#[derive(Serialize, Deserialize, AsChangeset)]
+#[table_name = "users"]
+pub struct AuthUser {
+    pub username: String,
+    pub password: String
 }
 
 #[derive(Serialize, Deserialize, Queryable, Insertable)]
@@ -91,6 +92,12 @@ impl User {
         Ok(users)
     }
 
+    pub fn find_by_username(username: String) -> Result<Self, CustomError> {
+        let conn = db::connection()?;
+        let user = users::table.filter(users::username.eq(username)).first(&conn)?;
+        Ok(user)
+    }
+
     pub fn create(user: CreateUser) -> Result<Self, CustomError> {
         let conn = db::connection()?;
         let mut user = CreateUser::from(user);
@@ -115,5 +122,11 @@ impl User {
         let conn = db::connection()?;
         let res = diesel::delete(users::table.filter(users::id.eq(id))).execute(&conn)?;
         Ok(res)
+    }
+
+    pub fn verify_password(&self, password: &[u8]) -> Result<bool, CustomError> {
+        argon2::verify_encoded(&self.password, password)
+            .map_err(|e| CustomError::new(500, format!("Failed to verify password: {}", e)))
+
     }
 }

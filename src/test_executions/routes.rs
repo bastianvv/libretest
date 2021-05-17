@@ -3,40 +3,65 @@ use crate::test_executions::{
     UpdateTestExecution,
     TestExecution,
 };
-
+use actix_session::Session;
 use actix_web::{delete, get, post, put, web, HttpResponse};
 use serde_json::json;
 use crate::error_handler::CustomError;
 
 //Requirements
 #[get("/testexecutions")]
-async fn find_all() -> Result<HttpResponse, CustomError> {
-    let test_executions = TestExecution::find_all()?;
-    Ok(HttpResponse::Ok().json(test_executions))
+async fn find_all(session: Session) -> Result<HttpResponse, CustomError> {
+    let id: Option<i32> = session.get("user_id")?;
+    if let Some(id) = id {
+        let test_executions = TestExecution::find_all()?;
+        Ok(HttpResponse::Ok().json(test_executions))
+    } else {
+        Err(CustomError::new(401, "Unauthorized".to_string()))
+    }
 }
 
 #[get("/testexecutions/{id}")]
-async fn find(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
-    let test_executions = TestExecution::find(id.into_inner())?;
-    Ok(HttpResponse::Ok().json(test_executions))
+async fn find(ex_id: web::Path<i32>, session: Session) -> Result<HttpResponse, CustomError> {
+    let id: Option<i32> = session.get("user_id")?;
+    if let Some(id) = id {
+        let test_executions = TestExecution::find(ex_id.into_inner())?;
+        Ok(HttpResponse::Ok().json(test_executions))
+    } else {
+        Err(CustomError::new(401, "Unauthorized".to_string()))
+    }
 }
 
 #[post("/testexecutions")]
-async fn create(test_execution: web::Json<CreateSimpleTestExecution>) -> Result<HttpResponse, CustomError> {
-    let test_execution = TestExecution::create(test_execution.into_inner())?;
-    Ok(HttpResponse::Ok().json(test_execution))
+async fn create(test_execution: web::Json<CreateSimpleTestExecution>, session: Session) -> Result<HttpResponse, CustomError> {
+    let id: Option<i32> = session.get("user_id")?;
+    if let Some(id) = id {
+        let test_execution = TestExecution::create(test_execution.into_inner())?;
+        Ok(HttpResponse::Ok().json(test_execution))
+    } else {
+        Err(CustomError::new(401, "Unauthorized".to_string()))
+    }
 }
 
 #[put("/testexecutions/{id}")]
-async fn update(id: web::Path<i32>, test_execution: web::Json<UpdateTestExecution>) -> Result<HttpResponse, CustomError> {
-    let test_execution = TestExecution::update(id.into_inner(), test_execution.into_inner())?;
-    Ok(HttpResponse::Ok().json(test_execution))
+async fn update(ex_id: web::Path<i32>, test_execution: web::Json<UpdateTestExecution>, session: Session) -> Result<HttpResponse, CustomError> {
+    let id: Option<i32> = session.get("user_id")?;
+    if let Some(id) = id {
+        let test_execution = TestExecution::update(ex_id.into_inner(), test_execution.into_inner())?;
+        Ok(HttpResponse::Ok().json(test_execution))
+    } else {
+        Err(CustomError::new(401, "Unauthorized".to_string()))
+    }
 }
 
 #[delete("/testexecutions/{id}")]
-async fn delete(id: web::Path<i32>) -> Result<HttpResponse, CustomError> {
-    let deleted_test_execution = TestExecution::delete(id.into_inner())?;
-    Ok(HttpResponse::Ok().json(json!({"deleted": deleted_test_execution})))
+async fn delete(ex_id: web::Path<i32>, session: Session) -> Result<HttpResponse, CustomError> {
+    let id: Option<i32> = session.get("user_id")?;
+    if let Some(id) = id {
+        let deleted_test_execution = TestExecution::delete(ex_id.into_inner())?;
+        Ok(HttpResponse::Ok().json(json!({"deleted": deleted_test_execution})))
+    } else {
+        Err(CustomError::new(401, "Unauthorized".to_string()))
+    }
 }
 
 pub fn init_routes(config: &mut web::ServiceConfig) {
