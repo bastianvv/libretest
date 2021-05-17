@@ -5,7 +5,6 @@ use crate::requirements::{
     LinkedRequirement,
     LinkedRequirements
 };
-use crate::users::User;
 use actix_web::{delete, get, post, put, web, HttpResponse};
 use serde_json::json;
 use actix_session::Session;

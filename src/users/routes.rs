@@ -60,8 +60,8 @@ async fn delete(user_id: web::Path<i32>, session: Session) -> Result<HttpRespons
     }
 }
 
-#[post("/sign-in")]
-async fn sign_in(credentials: web::Json<AuthUser>, session: Session) -> Result<HttpResponse, CustomError> {
+#[post("/login")]
+async fn login(credentials: web::Json<AuthUser>, session: Session) -> Result<HttpResponse, CustomError> {
     let credentials = credentials.into_inner();
 
     let user = User::find_by_username(credentials.username)
@@ -83,8 +83,8 @@ async fn sign_in(credentials: web::Json<AuthUser>, session: Session) -> Result<H
     }
 }
 
-#[post("/sign-out")]
-async fn sign_out(session: Session) -> Result<HttpResponse, CustomError> {
+#[post("/logout")]
+async fn logout(session: Session) -> Result<HttpResponse, CustomError> {
     let id: Option<i32> = session.get("user_id")?;
 
     if let Some(_) = id {
@@ -102,6 +102,6 @@ pub fn init_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(create);
     cfg.service(update);
     cfg.service(delete);
-    cfg.service(sign_in);
-    cfg.service(sign_out);
+    cfg.service(login);
+    cfg.service(logout);
 }
