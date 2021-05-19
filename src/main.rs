@@ -1,9 +1,10 @@
+extern crate openssl;
 #[macro_use]
 extern crate diesel;
 #[macro_use]
 extern crate diesel_migrations;
 extern crate env_logger;
-
+extern crate openssl_probe;
 use actix_web::{App, HttpServer, middleware};
 use actix_identity::{CookieIdentityPolicy, IdentityService};
 use dotenv::dotenv;
@@ -22,7 +23,7 @@ mod error_handler;
 
 #[actix_rt::main]
 async fn main() -> std::io::Result<()> {
-
+    openssl_probe::init_ssl_cert_env_vars();
     dotenv().ok();
     db::init();
 
