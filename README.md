@@ -6,4 +6,6 @@ There's a lack of free libre open source test managers out there. My plan is to 
 * Actix
 * Diesel
 
+Uses [Redis](https://github.com/redis/redis) for session storage. 
+
 API designed and tested with [Insomnia](https://github.com/Kong/insomnia).
